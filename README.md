@@ -1,6 +1,6 @@
 # Eureka TEKS Lookup for Teachers · Dallas ISD Math
 
-The teacher and campus version of the coordinators' Eureka dot chart (`MayraBT/Eureka_DOT_CHART`), Kindergarten through Grade 5.
+The teacher and campus version of the coordinators' Eureka TEKS chart (`MayraBT/Eureka_DOT_CHART`), Kindergarten through Grade 5.
 
 **What's in it:** each Eureka lesson with its TEKS (● the day's TEKS on the weekly IPC, ○ a bundled standard) and its teacher-edition link; By standard (student expectation, vocabulary in English and Spanish, vertical alignment, released STAAR items with Texas percents); Teaching moves; and the Full grid.
 
