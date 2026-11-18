@@ -3,8 +3,7 @@
 usage: python3 teacherize.py <coordinator index.html> <out index.html> <eureka|carnegie>
 
 Removes everything about IPC pacing and calendars (Calendar view, dates on lessons,
-"Taught in" quarter filters), Dallas ISD results, ACP items, and (Eureka) any lesson
-that is only on the unreleased Q3 IPCs or calendars. Keeps lessons with their TEKS
+"Taught in" quarter filters), Dallas ISD results and ACP items. Keeps every lesson (Q1–Q4) with lessons with their TEKS
 dots, teacher-edition links, released STAAR items with Texas percents (lead4ward IQ
 Tool), vertical alignment, vocabulary, Teaching moves and the Full grid.
 """
@@ -65,11 +64,7 @@ else:
         pace = c.get('pace', {}).get('lessons', {})
         keep = []
         for L in c['data']['lessons']:
-            if kind == 'eureka':
-                ds = pace.get(L['id'], {}).get('days', [])
-                only_q3 = (ds and all(d['q'] >= 3 for d in ds)) or L.get('q3') or L.get('prev')
-                if only_q3:
-                    removed.setdefault(key, []).append(L['id']); continue
+            # every lesson is kept (Q1–Q4) so teachers get every Teacher/TIG link
             L.pop('q3', None); L.pop('prev', None)
             if isinstance(L.get('note'), str):
                 L['note'] = re.sub(r';?\s*TEKS from the 2025-26 Q3 weekly IPC[^;]*', '', L['note']).strip('; ')
@@ -89,6 +84,7 @@ if kind == 'eureka':
         for key, ids in removed.items():
             for lid in ids: TIG.get(key, {}).pop(lid, None)
         set_const('TIG', TIG)
+s = s.replace("from the weekly IPC (Q1–Q3; district", "from the weekly IPC (every lesson, Q1–Q4; district").replace("from the weekly IPC (Q1–Q2 so far; district", "from the weekly IPC (every lesson, Q1–Q4; district")
 # Dallas ISD results and ACP (district-secured) items
 for nm in ('DIST', 'DIST_META', 'ACP', 'ACP_SETS'):
     if const_span(s, nm): set_const(nm, {})
@@ -132,7 +128,8 @@ rep('<span class="n">${lessons.length} lessons</span>', '<span class="n">${lesso
 # ---------- footers: drop pacing / Dallas ISD / ACP source sentences ----------
 s = re.sub(r" ?Q3: Grade \$\{g\} 2026-27 weekly IPCs where posted;[^.]*?\(marked on the lesson\)\.", "", s)
 s = re.sub(r" ?Q3 from the 2026-27 Q3 calendar when posted\.", "", s)
-s = s.replace(", Q1–Q2 (● = the TEKS line for the day", " (● = the TEKS line for the day").replace("; Q3 from the 2026-27 Q3 calendar when posted.", ".")
+s = s.replace("; Q3 weeks without a posted weekly IPC are paced from the 2026-27 Q3 calendar.", ".")
+s = s.replace(", Q1–Q2 (● = the TEKS line for the day", " (● = the TEKS line for the day").replace(", Q1–Q3 where posted (● = the TEKS line for the day", " (● = the TEKS line for the day").replace("; Q3 from the 2026-27 Q3 calendar when posted.", ".")
 s = re.sub(r" ?Dallas ISD results: SchoolCity Item Analysis[^)]*\)\.", "", s)
 s = re.sub(r" ?Pacing: Dallas ISD 2026-27 Instructional Planning Calendars[^.]*\.", "", s)
 s = re.sub(r" ?Example items: Dallas ISD Assessment Department.*?do not appear on the ACP\.", "", s)
