@@ -164,7 +164,7 @@ helpfix = r"""
 """
 rep('\nfunction helpTry', helpfix + '\nfunction helpTry')
 # footer: say what this version leaves out
-foot_note = " This teacher version leaves out IPC pacing and calendars and Dallas ISD results."
+foot_note = " This teacher version leaves out pacing calendars and district results."
 s = re.sub(r'(const FOOT\w*\s*=\s*[^\n]*?)(`;)', lambda m: m.group(1) + foot_note + m.group(2) if 'This teacher version' not in m.group(1) else m.group(0), s, count=1)
 # title
 s = s.replace('· TEKS Lookup</title>', '· TEKS Lookup for Teachers</title>')
@@ -177,6 +177,60 @@ css = """<style>
 s = s.replace('</head>', css, 1)
 # legend: drop the "when the lesson is on the IPC" sample
 s = re.sub(r'<span class="sep" aria-hidden="true"></span><span><i class="when">[^<]*</i>[^<]*</span>', '', s)
+
+# ---------- no references to the Dallas ISD IPCs in teacher versions ----------
+DEIPC = [
+ # Eureka
+ (r'TEKS Lookup built from the 2026-27 IPCs', 'TEKS Lookup'),
+ (r'This tool lists every Eureka Math TEKS Edition lesson with the TEKS it addresses, taken from the Dallas ISD 2026-27 weekly IPCs\.', 'This tool lists every Eureka Math TEKS Edition lesson with the TEKS it addresses.'),
+ (r'Lessons and TEKS from the Dallas ISD 2026-27 weekly Instructional Planning Calendars, ([^(]*?) Eureka Math \(● = the TEKS line for the day, ○ = bundled standards\), with lesson objectives from the 2026-27 quarterly calendars\.', r'Lessons, lesson objectives and TEKS: Eureka Math TEKS Edition, \1 (● = lesson TEKS, ○ = bundled standards).'),
+ (r'([Ll])esson TEKS on the weekly IPC', r'\1esson TEKS'),
+ (r'([Bb])undled standard on the weekly IPC', r'\1undled standard'),
+ (r"TEKS on the weekly IPC", 'TEKS'),
+ (r'The TEKS chart \(from the IPCs\)', 'The TEKS chart'),
+ (r'every lesson and TEKS from the IPCs', 'every lesson and TEKS'),
+ (r'button opens the Eureka teacher edition linked on the weekly IPC', 'button opens the Eureka teacher edition for that lesson'),
+ (r'Eureka teacher edition for this lesson, as linked on the weekly IPC', 'Eureka teacher edition for this lesson'),
+ (r' on the weekly IPC\.', '.'),
+ (r'The IPC also lists earlier-grade TEKS:', 'The lessons also list earlier-grade TEKS:'),
+ (r'; no IPC lessons', ''),
+ # Carnegie
+ (r'· Advanced IPC', '· Advanced'), (r'· on-level IPC', '· on-level'),
+ (r'middle school Algebra I IPC', 'middle school Algebra I'), (r'high school Algebra I IPC', 'high school Algebra I'),
+ (r'TEKS listed on the IPC \(Grade 7 lesson\)', 'TEKS listed for this Grade 7 lesson'),
+ (r'TEKS as listed on the IPC', 'TEKS listed for the lesson'),
+ (r'Each lesson shows when it is on the IPC\. ', ''),
+ (r'opens the teacher version of the lesson from the weekly IPC \(every lesson, Q1–Q4; district Google sign-in required\)', 'opens the teacher version of the lesson (district Google sign-in required)'),
+ (r'in the order of the Dallas ISD 2026-27 Instructional Planning Calendars, 7th Advanced Math, Q1–Q4; module, topic, and lesson numbers follow the IPC \(including its SMC 3 response labels\)\.', 'in the Dallas ISD 7th Advanced course order, with its module, topic, and lesson numbers.'),
+ (r'listed beside them on the IPC', 'listed for them'),
+ (r'The lesson the IPC skips in M2 T3 \(L2\) is not listed; M2 T5 L1 is kept from the Grade 8 chart and shows as not on the IPC\.', 'M2 T3 L2 is not part of the course and is not listed; M2 T5 L1 is kept from the Grade 8 chart.'),
+ (r' "After STAAR" means a lesson starts after the Grade 8 Math STAAR date on the IPC\.', ''),
+ (r' Dallas ISD results: SchoolCity Item Analysis[^.]*?roster\.', ''),
+ (r'nor the 7th Advanced IPC lists it for a lesson', 'nor the Grade 7 lessons list it'),
+ (r' The Calendar tab reproduces the IPC day by day[^;]*;\s*\\?"today\\?" follows the device clock\.', ''),
+ # both
+ (r' · not on IPC', ''), (r' · not on the 2026-27 IPC', ''),
+]
+for a, b in DEIPC:
+    s = re.sub(a, b, s)
+
+FIX2 = [
+ ('The IPC day by day', 'The calendar day by day'),
+ ('Before you step in, know what the IPC says should be happening today', 'Before you step in, know what should be happening today'),
+ ('compare what you see to the IPC:', 'compare what you see to the calendar:'),
+ ('None of these lessons is scheduled on the 2026-27 IPC.', 'None of these lessons is scheduled this year.'),
+ ('On the 2026-27 IPC in ', 'Scheduled in '),
+ ('the TEKS the IPC lists for that day', 'the TEKS listed for that day'),
+ ('SMC 3 response day on the IPC', 'SMC 3 response day'),
+ ('Today is outside the 2026-27 IPC.', 'Today is outside the 2026-27 school calendar.'),
+ ('not on the 2026-27 IPC', 'not scheduled'),
+ ('matches the IPC day', 'matches the calendar day'),
+ ('listed on the IPC', 'listed for the lesson'),
+]
+for a, b in FIX2:
+    s = s.replace(a, b)
+# anything left (hidden Q3 notes): generic wording, but never touch the help filter regex
+s = '\n'.join(l if 'const bad=' in l else re.sub(r'(?:the )?(?:Dallas ISD )?(?:20\d\d-\d\d )?(?:Q\d )?(?:weekly )?IPCs?\b', 'the planning calendar', l) for l in s.split('\n'))
 
 open(out, 'w').write(s)
 print('removed Q3-only lessons:', {k: len(v) for k, v in removed.items()})
