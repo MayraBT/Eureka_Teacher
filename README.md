@@ -2,9 +2,9 @@
 
 The teacher and campus version of the coordinators' Eureka TEKS chart (`MayraBT/Eureka_DOT_CHART`), Kindergarten through Grade 5.
 
-**What's in it:** each Eureka lesson with its TEKS (● the day's TEKS on the weekly IPC, ○ a bundled standard) and its teacher-edition link; By standard (student expectation, vocabulary in English and Spanish, vertical alignment, released STAAR items with Texas percents); Teaching moves; and the Full grid.
+**What's in it:** every Eureka Math TEKS Edition lesson (supplemental lessons and lessons the district calendar skips included) with the TEKS its Teacher Edition lists for it, and a link to that lesson's Teacher Edition pages; By standard (student expectation, vocabulary in English and Spanish, vertical alignment, released STAAR items with Texas percents); Teaching moves; and the Full grid.
 
-**Left out on purpose:** IPC pacing and calendars (no Calendar view, no dates, no "Taught in" quarter filters), and Dallas ISD STAAR results. Every lesson (Q1–Q4) is listed with its Teacher link.
+**Independent of the IPC:** lesson TEKS come only from the Teacher Editions (each module's Overview of Module Topics and Lesson Objectives, and the Supplement Overview). No IPC pacing, calendars, dates or Dallas ISD STAAR results. Built with `TE_ONLY=1 python3 build_data.py && TE_ONLY=1 python3 assemble.py`, then `teacherize.py` and `te_teacher.py`.
 
 Teaching moves are suggestions, not a complete list, and not a checklist for evaluating teacher instruction or performance.
 
@@ -17,4 +17,4 @@ cp -r ../Eureka_DOT_CHART/items .
 ```
 Then test (`build/test_teacher.js`, with a local server on port 8770 serving the parent folder) and push.
 
-Sources: lead4ward IQ Tool (released STAAR items and Texas percents), lead4ward TEKS Scaffold and Academic Vocabulary, 19 TAC §111 (TEKS), Eureka Math TEKS Edition and Dallas ISD 2026-27 weekly IPCs (lesson TEKS).
+Sources: lead4ward IQ Tool (released STAAR items and Texas percents), lead4ward TEKS Scaffold and Academic Vocabulary, 19 TAC §111 (TEKS), Eureka Math TEKS Edition Teacher Editions (lessons and lesson TEKS). Lesson PDFs: Math Department (All) › Eureka individual lesson files › Grade › Module.
